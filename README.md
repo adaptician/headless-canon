@@ -1,9 +1,9 @@
 # headless-canon
 
-# run the server
+## Run the server
 `node server.js`
 
-# test the API
+## Test the API
 
 ```
 curl -X POST http://localhost:3000/addBody \
@@ -22,3 +22,5 @@ curl -X POST http://localhost:3000/step \
 -H "Content-Type: application/json" \
 -d '{"dt": 0.016}'
 ```
+
+##
