@@ -23,4 +23,10 @@ curl -X POST http://localhost:3000/step \
 -d '{"dt": 0.016}'
 ```
 
-##
+## Deploy to Docker
+ 
+`npm run build` to create dist folder
+
+`docker build -t canonjs-with-client .`
+
+`docker run -p 3000:3000 canonjs-with-client`

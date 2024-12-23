@@ -1,6 +1,7 @@
 ﻿const express = require('express');
 const bodyParser = require('body-parser');
 const { world, bodies, stepWorld, CANNON } = require('./physicsWorld');
+const {join} = require("node:path");
 
 const app = express();
 const PORT = 3000;
@@ -60,6 +61,20 @@ app.post('/step', (req, res) => {
     res.send({ message: 'World stepped', bodies: bodies.map(body => body.position) });
 });
 
+// Serve Angular app
+const clientPath = join(__dirname, 'client', 'dist', 'client');
+app.use(express.static(clientPath));
+
+// Handle all other requests with Angular's index.html
+app.get('*', (req, res) => {
+    res.sendFile(join(clientPath, 'index.html'));
+});
+
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+// This setup serves your Angular app from the client/dist/client directory after building it for production.
+
+// Create a proxy.conf.json file in the client directory to forward API requests to the Node.js
