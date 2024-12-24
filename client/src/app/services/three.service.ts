@@ -35,7 +35,7 @@ export class ThreeService {
     this._renderer.setSize(canvas.nativeElement.clientWidth, canvas.nativeElement.clientHeight);
   }
 
-  addObject(id: number, shape: string, position: THREE.Vector3, quaternion: THREE.Quaternion): void {
+  addObject(id: number, shape: string, position?: THREE.Vector3, quaternion?: THREE.Quaternion): void {
     // Create a Three.js object based on the shape
     let geometry;
     switch (shape) {
@@ -51,14 +51,20 @@ export class ThreeService {
 
     const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.copy(position);
-    mesh.quaternion.copy(quaternion);
+
+    if (position) {
+      mesh.position.copy(position);
+    }
+
+    if (quaternion) {
+      mesh.quaternion.copy(quaternion);
+    }
 
     this._scene.add(mesh);
     this._objects.set(id, mesh);
   }
 
-  updateScene(body: any, position: THREE.Vector3, quaternion: THREE.Quaternion) {
+  updateScene(body: any, position?: THREE.Vector3, quaternion?: THREE.Quaternion) {
     if (!this._objects.has(body.id)) {
       // TODO: this needs to be refined.
       this.addObject(body.id, 'box', position, quaternion); // Assuming 'box' for simplicity
@@ -67,10 +73,15 @@ export class ThreeService {
     }
   }
 
-  updateObject(id: number, position: THREE.Vector3, quaternion: THREE.Quaternion): void {
+  updateObject(id: number, position?: THREE.Vector3, quaternion?: THREE.Quaternion): void {
     const object = this._objects.get(id);
-    if (object) {
+    if (!object) return;
+
+    if (position) {
       object.position.copy(position);
+    }
+
+    if (quaternion) {
       object.quaternion.copy(quaternion);
     }
   }

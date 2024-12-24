@@ -1,7 +1,8 @@
-import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import {Component, AfterViewInit, ElementRef, ViewChild} from '@angular/core';
 import * as THREE from 'three';
 import {ThreeService} from "../../services/three.service";
 import {PhysicsService} from "../../services/physics.service";
+import {IWorld} from "cosmos";
 
 @Component({
   selector: 'app-preview',
@@ -9,12 +10,13 @@ import {PhysicsService} from "../../services/physics.service";
   styleUrls: ['./preview.component.less']
 })
 export class PreviewComponent implements AfterViewInit {
-  @ViewChild('threeCanvas', { static: true }) canvasRef!: ElementRef;
+  @ViewChild('threeCanvas', {static: true}) canvasRef!: ElementRef;
 
   constructor(
     private threeService: ThreeService,
     private physicsService: PhysicsService,
-  ) {}
+  ) {
+  }
 
   ngAfterViewInit(): void {
     this.threeService.initialize(this.canvasRef);
@@ -23,21 +25,32 @@ export class PreviewComponent implements AfterViewInit {
     this.animate();
   }
 
-  updateWorld(): void {
-    this.physicsService.getWorld().subscribe(res => {
-      // TODO: refine this - it needs types. NOT Cannon - cannonical :D
-      const data = res as { state: any[] };
+  private updateWorld(): void {
+    this.physicsService.getWorld()
+      .subscribe(res => {
+        if (!res) return;
 
-      data.state.forEach(body => {
-        const position = new THREE.Vector3(body.position.x, body.position.y, body.position.z);
-        const quaternion = new THREE.Quaternion(body.quaternion.x, body.quaternion.y, body.quaternion.z, body.quaternion.w);
+        const world = res as IWorld;
+        if (!world) return;
 
-        this.threeService.updateScene(body, position, quaternion);
+        world.bodies?.forEach(body => {
+
+          const position =
+            body.position
+            ? new THREE.Vector3(body.position.x, body.position.y, body.position.z)
+            : undefined;
+
+          const quaternion =
+            body.quaternion
+            ? new THREE.Quaternion(body.quaternion.x, body.quaternion.y, body.quaternion.z, body.quaternion.w)
+            : undefined;
+
+          this.threeService.updateScene(body, position, quaternion);
+        });
       });
-    });
   }
 
-  animate(): void {
+  private animate(): void {
     requestAnimationFrame(() => this.animate());
     this.updateWorld();
     this.threeService.render();
