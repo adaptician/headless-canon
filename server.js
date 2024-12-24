@@ -2,11 +2,25 @@
 const bodyParser = require('body-parser');
 const { world, bodies, stepWorld, CANNON } = require('./physicsWorld');
 const {join} = require("node:path");
+const cors = require('cors');
 
 const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
+
+app.use(cors());
+
+// API to retrieve the world state.
+app.get('/world', (req, res) => {    
+    const state = bodies.map(body => ({
+        id: body.id, // Add a unique ID to each body
+        position: body.position,
+        quaternion: body.quaternion // For rotation
+    }));
+
+    res.json({ state });
+});
 
 // API to add a new body to the world
 app.post('/addBody', (req, res) => {
@@ -67,7 +81,7 @@ app.use(express.static(clientPath));
 
 // Handle all other requests with Angular's index.html
 app.get('*', (req, res) => {
-    res.sendFile(join(clientPath, 'index.html'));
+    res.sendFile(join(__dirname, 'client', 'dist', 'client', 'index.html'));
 });
 
 

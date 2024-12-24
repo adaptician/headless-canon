@@ -1,11 +1,17 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AppComponent} from "./app.component";
+import {PreviewComponent} from "./preview/preview/preview.component";
 
 const routes: Routes = [
   {
+    path: 'preview',
+    component: PreviewComponent
+  },
+  {
     path: '',
-    component: AppComponent
+    redirectTo: '/preview',
+    pathMatch: 'full'
   }
 ];
 
