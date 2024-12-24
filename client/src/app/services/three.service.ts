@@ -35,6 +35,10 @@ export class ThreeService {
     this._renderer.setSize(canvas.nativeElement.clientWidth, canvas.nativeElement.clientHeight);
   }
 
+  clearBodies(): void {
+    this._objects.clear();
+  }
+
   addObject(id: number, shape: string, position?: THREE.Vector3, quaternion?: THREE.Quaternion): void {
     // Create a Three.js object based on the shape
     let geometry;

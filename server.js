@@ -1,6 +1,6 @@
 ﻿const express = require('express');
 const bodyParser = require('body-parser');
-const { world, bodies, stepWorld, CANNON } = require('./world');
+const { world, bodies, stepWorld, CANNON, clear} = require('./world');
 const {join} = require("node:path");
 const cors = require('cors');
 
@@ -58,7 +58,7 @@ app.post('/addBody', (req, res) => {
     world.addBody(body);
     bodies.push(body);
 
-    res.send({ message: 'Body added', bodyId: bodies.length - 1 });
+    res.send({ message: `Body added; world bodies: ${world.bodies?.length ?? 0} bodies: ${bodies?.length ?? 0}`});
 });
 
 // API to apply force to a body
@@ -82,6 +82,11 @@ app.post('/step', (req, res) => {
     const { dt } = req.body;
     stepWorld(dt);
     res.send({ message: 'World stepped', bodies: bodies.map(body => body.position) });
+});
+
+app.post('/clear', (req, res) => {
+    clear();
+    res.send({ message: `World cleared; world bodies: ${world.bodies?.length ?? 0} bodies: ${bodies?.length ?? 0}`});
 });
 
 // Serve Angular app

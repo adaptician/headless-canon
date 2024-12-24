@@ -1,7 +1,7 @@
 ﻿const CANNON = require('cannon');
 
 // Create a world
-const world = new CANNON.World();
+let world = new CANNON.World();
 function initWorld() {
     world.broadphase = new CANNON.SAPBroadphase(world);
     world.allowSleep = true;
@@ -32,17 +32,29 @@ function initFloor() {
 
 
 // Store bodies to manipulate them later
-const bodies = [];
+let bodies = [];
 
 // Step the simulation
 const stepWorld = (dt = 1 / 60) => {
     world.step(dt);
 };
 
+function init() {
+    world = new CANNON.World();
 
-// boilerplate
-initWorld();
-initMaterial();
-initFloor();
+    initWorld();
+    initMaterial();
+    initFloor();
+}
 
-module.exports = { world, bodies, stepWorld, CANNON };
+function clear() {
+    // TODO: this is not working
+    world.bodies.forEach(body => world.remove(body));
+    bodies = [];
+
+    init();
+}
+
+init();
+
+module.exports = { world, bodies, stepWorld, clear, CANNON };

@@ -25,4 +25,8 @@ export class PhysicsService {
   stepWorld(dt: number) {
     return this.http.post(`${this.apiUrl}/step`, { dt });
   }
+
+  clear() {
+    return this.http.post(`${this.apiUrl}/clear`, {}).subscribe();
+  }
 }

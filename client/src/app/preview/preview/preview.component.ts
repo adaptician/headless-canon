@@ -26,8 +26,18 @@ export class PreviewComponent implements AfterViewInit {
   }
 
   addClone(shapeName: string): void {
-    const body: IBodyBuild = { shape: shapeName, mass: 5, position: { x: 2, y: 2, z: 0 }, quaternion: {x: -1, y: 0, z: 0, w: 0.0017} };
+    const body: IBodyBuild = {
+      shape: shapeName,
+      mass: this.getRandom(),
+      position: { x: this.getRandom(), y: this.getRandom(), z: this.getRandom() },
+      quaternion: {x: -this.getRandom(), y: this.getRandom(), z: this.getRandom(), w: 0.0017}
+    };
     this.physicsService.addBody(body);
+  }
+
+  reset(): void {
+    this.physicsService.clear();
+    this.threeService.clearBodies();
   }
 
   private updateWorld(): void {
@@ -61,5 +71,7 @@ export class PreviewComponent implements AfterViewInit {
     this.threeService.render();
   }
 
-
+  private getRandom(): number {
+    return Math.random() * 0.2;
+  }
 }
