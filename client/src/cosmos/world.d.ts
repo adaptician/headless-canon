@@ -9,6 +9,13 @@
     quaternion?: IQuaternion | undefined;
   }
 
+  export interface IBodyBuild {
+    shape: string;
+    position?: IVector3 | undefined;
+    mass?: number | undefined;
+    quaternion?: IQuaternion | undefined;
+  }
+
   export interface IMaterial {
     name: string;
     id: number;

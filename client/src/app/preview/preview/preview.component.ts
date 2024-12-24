@@ -2,7 +2,7 @@ import {Component, AfterViewInit, ElementRef, ViewChild} from '@angular/core';
 import * as THREE from 'three';
 import {ThreeService} from "../../services/three.service";
 import {PhysicsService} from "../../services/physics.service";
-import {IWorld} from "cosmos";
+import {IBodyBuild, IWorld} from "cosmos";
 
 @Component({
   selector: 'app-preview',
@@ -23,6 +23,11 @@ export class PreviewComponent implements AfterViewInit {
 
     this.updateWorld();
     this.animate();
+  }
+
+  addClone(shapeName: string): void {
+    const body: IBodyBuild = { shape: shapeName, mass: 5, position: { x: 2, y: 2, z: 0 }, quaternion: {x: -1, y: 0, z: 0, w: 0.0017} };
+    this.physicsService.addBody(body);
   }
 
   private updateWorld(): void {
@@ -55,4 +60,6 @@ export class PreviewComponent implements AfterViewInit {
     this.updateWorld();
     this.threeService.render();
   }
+
+
 }

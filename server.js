@@ -13,13 +13,15 @@ app.use(cors());
 
 // API to retrieve the world state.
 app.get('/world', (req, res) => {    
-    const state = bodies.map(body => ({
+    const _bodies = bodies.map(body => ({
         id: body.id, // Add a unique ID to each body
         position: body.position,
         quaternion: body.quaternion // For rotation
     }));
 
-    res.json({ state });
+    res.json({ 
+        bodies: _bodies
+    });
 });
 
 // API to add a new body to the world
@@ -27,6 +29,7 @@ app.post('/addBody', (req, res) => {
     const { shape, mass, position, quaternion } = req.body;
 
     let body;
+    // TODO:T introduce prototype pattern here.
     switch (shape) {
         case 'box':
             body = new CANNON.Body({ mass });
@@ -42,7 +45,6 @@ app.post('/addBody', (req, res) => {
 
     // Set the initial position
     if (position) {
-        // body.position.set(position.x, position.y, position.z);
         body.position.copy(position);
     }
     
