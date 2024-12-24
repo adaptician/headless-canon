@@ -24,10 +24,11 @@ export class PreviewComponent implements AfterViewInit {
   }
 
   updateWorld(): void {
-    this.physicsService.getWorld().subscribe(data => {
-      console.log(`WORLD ${JSON.stringify(data)}`);
-      const state = data as any[];
-      state.forEach(body => {
+    this.physicsService.getWorld().subscribe(res => {
+      // TODO: refine this - it needs types. NOT Cannon - cannonical :D
+      const data = res as { state: any[] };
+
+      data.state.forEach(body => {
         const position = new THREE.Vector3(body.position.x, body.position.y, body.position.z);
         const quaternion = new THREE.Quaternion(body.quaternion.x, body.quaternion.y, body.quaternion.z, body.quaternion.w);
 

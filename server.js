@@ -24,7 +24,7 @@ app.get('/world', (req, res) => {
 
 // API to add a new body to the world
 app.post('/addBody', (req, res) => {
-    const { shape, mass, position } = req.body;
+    const { shape, mass, position, quaternion } = req.body;
 
     let body;
     switch (shape) {
@@ -42,8 +42,15 @@ app.post('/addBody', (req, res) => {
 
     // Set the initial position
     if (position) {
-        body.position.set(position.x, position.y, position.z);
+        // body.position.set(position.x, position.y, position.z);
+        body.position.copy(position);
     }
+    
+    if (quaternion) {
+        body.quaternion.copy(quaternion);
+    }
+    
+    body.material = new CANNON.Material('default');
 
     // Add the body to the world
     world.addBody(body);
