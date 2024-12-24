@@ -1,6 +1,6 @@
 ﻿const express = require('express');
 const bodyParser = require('body-parser');
-const { world, bodies, stepWorld, CANNON } = require('./physicsWorld');
+const { world, bodies, stepWorld, CANNON } = require('./world');
 const {join} = require("node:path");
 const cors = require('cors');
 
