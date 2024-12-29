@@ -4,10 +4,14 @@ import { WorldController } from "../controllers/worldController";
 
 const router = Router();
 
-// Setup a simple Dependency Injection pattern.
+// Use a simple Dependency Injection pattern.
 const worldService = new WorldService();
 const worldController = new WorldController(worldService);
 
 router.post('/stage', worldController.stage);
+
+router.get('/stream', worldController.stream);
+
+router.post('/mock', worldController.mock);
 
 export default router;

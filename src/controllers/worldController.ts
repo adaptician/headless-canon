@@ -1,4 +1,4 @@
-﻿import { Request, Response } from 'express';
+﻿import {NextFunction, Request, RequestHandler, Response} from 'express';
 import {WorldService} from "../services/world.service";
 import {plainToInstance} from "class-transformer";
 import {StageWorld} from "../services/dtos/stageworld.dto";
@@ -11,16 +11,33 @@ export class WorldController {
         this.worldService = worldService;
     }
 
-    stage = async (req: Request<StageWorld>, res: Response) => {
-        const dto = plainToInstance(StageWorld, req.body);
+    stage: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const dto = plainToInstance(StageWorld, req.body);
 
-        const errors = await validate(dto);
-        if (errors.length > 0) {
-            return res.status(400).json({ errors });
+            const errors = await validate(dto);
+            if (errors.length > 0) {
+                res.status(400).json({ errors });
+                return;
+            }
+
+            this.worldService.stage(dto.id);
+
+            res.json({ message: `A world has been staged with ID: ${this.worldService.identify()}` });
+        } catch (error) {
+            next(error); // Pass errors to the Express error handler
         }
-        
-        this.worldService.stage(dto.id);
+    };
 
-        res.json({ message: `A world has been staged with ID: ${this.worldService.identify()}` });
+    stream = (req: Request, res: Response) => {
+        const stream = this.worldService.stream();
+
+        res.json({ world: stream });
+    };
+    
+    mock = (req: Request, res: Response) => {
+        this.worldService.spawnBubbles();
+
+        res.json({ message: `You should see bubbles ...` });
     };
 }
