@@ -11,6 +11,7 @@ const worldController = new WorldController(worldService);
 router.post('/stage', worldController.stage);
 
 router.get('/stream', worldController.stream);
+router.get('/raw', worldController.raw);
 
 router.post('/mock', worldController.mock);
 

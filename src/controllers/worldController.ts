@@ -34,8 +34,15 @@ export class WorldController {
 
         res.json({ world: stream });
     };
+
+    raw = (req: Request, res: Response) => {
+        const stream = this.worldService.raw();
+
+        res.json({ world: stream });
+    };
     
     mock = (req: Request, res: Response) => {
+        this.worldService.stage("test");
         this.worldService.spawnBubbles();
 
         res.json({ message: `You should see bubbles ...` });

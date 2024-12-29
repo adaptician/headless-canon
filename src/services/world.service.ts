@@ -1,5 +1,7 @@
 ﻿import {Body, ContactMaterial, Material, Plane, SAPBroadphase, Sphere, Vec3, World } from 'cannon-es';
-import {IBody, IWorld} from "cosmos";
+import {IWorld} from "cosmos";
+import {IQuaternion, IVector3} from "cosmos/Primitive";
+import {IBody} from "cosmos/Body";
 
 export class WorldService {
     
@@ -19,11 +21,28 @@ export class WorldService {
     }
     
     stream(): IWorld {
+        const bodies = this._world.bodies.map(body => {
+            return {
+                id: body.id,
+                shapeType: 'box',
+                position: body.position as IVector3,
+                quaternion: body.quaternion as IQuaternion
+            } as IBody;
+        }, []);
+        
         const streamable = {
-            bodies: []
+            bodies: bodies
         } as IWorld;
         
         return streamable;
+    }
+    
+    raw(): any {
+        return this._world.bodies.map(body => ({
+            id: body.id,
+            position: body.position,
+            quaternion: body.quaternion // For rotation
+        }));
     }
     
     private configure(id: string): void {
