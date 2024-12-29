@@ -13,8 +13,11 @@ export class WorldController {
 
     stage: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
+            console.log(`Request to STAGE ...`);
             const dto = plainToInstance(StageWorld, req.body);
 
+            console.log(`Stage request ${JSON.stringify(dto)}`);
+            
             const errors = await validate(dto);
             if (errors.length > 0) {
                 res.status(400).json({ errors });
@@ -30,9 +33,10 @@ export class WorldController {
     };
 
     stream = (req: Request, res: Response) => {
+        console.log(`Request to STREAM ...`);
         const stream = this.worldService.stream();
 
-        res.json({ world: stream });
+        res.json({ data: stream });
     };
 
     raw = (req: Request, res: Response) => {

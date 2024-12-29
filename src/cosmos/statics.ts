@@ -1,5 +1,6 @@
 ﻿// For some reason these don't work when added to the .d.ts file itself. No idea why - it seems like it should.
 export const SHAPE_TYPES = {
+    PLANE: 'plane',
     SPHERE: 'sphere',
     BOX: 'box',
     UNKNOWN: 'unknown',
