@@ -1,7 +1,9 @@
 ﻿import {Body, ContactMaterial, Material, Plane, SAPBroadphase, Sphere, Vec3, World } from 'cannon-es';
-import {IWorld} from "cosmos";
-import {IMaterial, IQuaternion, IVector3} from "cosmos/Primitive";
-import {IBody} from "cosmos/Body";
+import {IWorld} from 'cosmos';
+import {IMaterial, IQuaternion, IVector3} from 'cosmos/Primitive';
+import {IBody} from 'cosmos/Body';
+
+import {mapToShapeType} from "./cosmos-cannon";
 
 export class WorldService {
     
@@ -22,9 +24,11 @@ export class WorldService {
     
     stream(): IWorld {
         const bodies = this._world.bodies.map(body => {
+            
             return {
                 id: body.id,
-                shapeType: 'box',
+                // TODO:T once this has moved to event-driven flow, improve upon this janky code.
+                shapeType: mapToShapeType(body.shapes[0].type),
                 mass: body.mass,
                 material: body.material as IMaterial,
                 position: body.position as IVector3,

@@ -1,10 +1,17 @@
 ﻿
 declare module "cosmos/Shape" {
+    import {IMaterial} from "cosmos/Primitive";
     export const SHAPE_TYPES: {
         readonly SPHERE: 'sphere';
         readonly BOX: 'box';
     };
     export type ShapeType = typeof SHAPE_TYPES[keyof typeof SHAPE_TYPES];
+    
+    export interface IShape {
+        id: number;
+        type: ShapeType;
+        material: IMaterial;
+    }
 }
 
 declare module "cosmos/Primitive" {
