@@ -2,6 +2,7 @@
 import {WorldService} from "../services/world.service";
 import {plainToInstance} from "class-transformer";
 import {StageWorld} from "../services/dtos/stageworld.dto";
+import {validate} from "class-validator";
 
 export class WorldController {
     private worldService: WorldService;
@@ -10,8 +11,13 @@ export class WorldController {
         this.worldService = worldService;
     }
 
-    stage = (req: Request<StageWorld>, res: Response) => {
+    stage = async (req: Request<StageWorld>, res: Response) => {
         const dto = plainToInstance(StageWorld, req.body);
+
+        const errors = await validate(dto);
+        if (errors.length > 0) {
+            return res.status(400).json({ errors });
+        }
         
         this.worldService.stage(dto.id);
 
