@@ -8,6 +8,6 @@ const router = Router();
 const worldService = new WorldService();
 const worldController = new WorldController(worldService);
 
-router.get('/stage', worldController.stage);
+router.post('/stage', worldController.stage);
 
 export default router;

@@ -16,7 +16,7 @@ export class WorldService {
         
         this.addFloor();
     }
-
+    
     private configure(id: string): void {
         this._world.broadphase = new SAPBroadphase(this._world);
         this._world.allowSleep = true;
