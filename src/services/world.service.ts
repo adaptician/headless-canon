@@ -1,6 +1,6 @@
 ﻿import {Body, ContactMaterial, Material, Plane, SAPBroadphase, Sphere, Vec3, World } from 'cannon-es';
 import {IWorld} from "cosmos";
-import {IQuaternion, IVector3} from "cosmos/Primitive";
+import {IMaterial, IQuaternion, IVector3} from "cosmos/Primitive";
 import {IBody} from "cosmos/Body";
 
 export class WorldService {
@@ -25,6 +25,8 @@ export class WorldService {
             return {
                 id: body.id,
                 shapeType: 'box',
+                mass: body.mass,
+                material: body.material as IMaterial,
                 position: body.position as IVector3,
                 quaternion: body.quaternion as IQuaternion
             } as IBody;
