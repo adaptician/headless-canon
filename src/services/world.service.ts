@@ -1,9 +1,23 @@
-﻿import {Body, ContactMaterial, Material, Plane, SAPBroadphase, Sphere, Vec3, World } from 'cannon-es';
-import {IWorld} from 'cosmos';
-import {IMaterial, IQuaternion, IVector3} from 'cosmos/Primitive';
-import {IBody} from 'cosmos/Body';
-
+﻿import {
+    Body, 
+    Box,
+    ContactMaterial, 
+    Material, 
+    Plane, 
+    SAPBroadphase, 
+    Sphere, 
+    Vec3, 
+    World 
+} from 'cannon-es';
+import {
+    IBody, 
+    IMaterial, 
+    IQuaternion, 
+    IWorld, 
+    IVector3
+} from 'cosmos-inf';
 import {mapToShapeType} from "./cosmos-cannon";
+
 
 export class WorldService {
     
@@ -139,6 +153,27 @@ export class WorldService {
         this._world.addContactMaterial(mat1_ground);
         this._world.addContactMaterial(mat2_ground);
         this._world.addContactMaterial(mat3_ground);
+    }
+    
+    spawnLego(): void {
+        const mass = 10;
+        const damping = 0.01;
+
+        const groundMaterial = new Material('ground');
+        const boxShape = new Box(new Vec3(2, 2, 2));
+
+        const mat1 = new Material();
+        const shapeBody1 = new Body({
+            mass,
+            material: mat1,
+            position: new Vec3(5, 5, 5),
+        });
+        shapeBody1.addShape(boxShape);
+        shapeBody1.linearDamping = damping;
+
+        this._world.addBody(shapeBody1);
+
+        const mat1_ground = new ContactMaterial(groundMaterial, mat1, { friction: 0.0, restitution: 0.0 });
     }
     
     //#endregion

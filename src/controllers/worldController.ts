@@ -44,7 +44,8 @@ export class WorldController {
     mock = (req: Request, res: Response) => {
         this.worldService.stage("test");
         this.worldService.spawnBubbles();
+        this.worldService.spawnLego();
 
-        res.json({ message: `You should see bubbles ...` });
+        res.json({ message: `mocking completed.` });
     };
 }

@@ -1,16 +1,13 @@
 ﻿
 declare module "cosmos/Shape" {
     import {IMaterial} from "cosmos/Primitive";
-    export const SHAPE_TYPES: {
-        readonly SPHERE: 'sphere';
-        readonly BOX: 'box';
-    };
-    export type ShapeType = typeof SHAPE_TYPES[keyof typeof SHAPE_TYPES];
+    import {ShapeType} from "./statics";
     
     export interface IShape {
         id: number;
         type: ShapeType;
         material: IMaterial;
+        fake: string;
     }
 }
 
@@ -37,8 +34,8 @@ declare module "cosmos/Primitive" {
 }
 
 declare module "cosmos/Body" {
-    import { ShapeType } from "cosmos/Shape";
     import { IVector3, IMaterial, IQuaternion } from "cosmos/Primitive";
+    import {ShapeType} from "./statics";
     
     export interface IBody {
         id: number;
@@ -58,7 +55,7 @@ declare module "cosmos/World" {
     }
 }
 
-declare module "cosmos" {
+declare module "cosmos-inf" {
     export * from "cosmos/Shape";
     export * from "cosmos/Primitive";
     export * from "cosmos/Body";

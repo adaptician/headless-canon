@@ -1,17 +1,13 @@
 ﻿import {SHAPE_TYPES as CANNON_SHAPE_TYPES, ShapeType as CannonShapeType} from "cannon-es";
-import {SHAPE_TYPES, ShapeType} from "cosmos";
+import {SHAPE_TYPES, ShapeType} from "../cosmos/statics";
 
-export function mapToShapeType(cannonType: number | 0): /*ShapeType*/ string {
+export function mapToShapeType(cannonType: CannonShapeType | 0): ShapeType {
     switch (cannonType) {
-        // case CANNON_SHAPE_TYPES.BOX:
-        case 4:
-            // return SHAPE_TYPES.BOX;
-            return 'box';
-        // case CANNON_SHAPE_TYPES.SPHERE:
-        case 1:
-            // return SHAPE_TYPES.SPHERE;
-            return 'sphere';
+        case CANNON_SHAPE_TYPES.BOX:
+            return SHAPE_TYPES.BOX;
+        case CANNON_SHAPE_TYPES.SPHERE:
+            return SHAPE_TYPES.SPHERE;
         default:
-            return 'unknown';
+            return SHAPE_TYPES.UNKNOWN;
     }
 }
