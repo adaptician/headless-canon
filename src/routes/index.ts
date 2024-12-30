@@ -8,10 +8,10 @@ import {WorldDeltaService} from "../services/world/world-delta.service";
 const router = Router();
 
 // Use a simple Dependency Injection pattern.
-const worldDeltaService = new WorldDeltaService();
-const worldCreationService = new WorldCreationService();
 const uniformGridService = new UniformGridService();
-const worldService = new WorldService(worldCreationService, worldDeltaService, uniformGridService);
+const worldDeltaService = new WorldDeltaService(uniformGridService);
+const worldCreationService = new WorldCreationService();
+const worldService = new WorldService(worldCreationService, worldDeltaService);
 
 const worldController = new WorldController(worldService);
 

@@ -1,4 +1,4 @@
-﻿import {Body, ContactMaterial, Material, Plane, SAPBroadphase, Vec3, World} from "cannon-es";
+﻿import {Body, Box, ContactMaterial, Material, Plane, SAPBroadphase, Vec3, World} from "cannon-es";
 
 export class WorldCreationService {
 
@@ -34,6 +34,7 @@ export class WorldCreationService {
         const floorBody = new Body();
         floorBody.mass = 0;
         floorBody.addShape(floorShape);
+        // Make it face upwards.
         floorBody.quaternion.setFromAxisAngle(new Vec3(- 1, 0, 0), Math.PI * 0.5);
 
         world.addBody(floorBody);

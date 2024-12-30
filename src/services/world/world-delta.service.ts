@@ -3,6 +3,7 @@ import {SHAPE_TYPES} from "../../cosmos/statics";
 import {Body, Box, Material, Plane, Sphere, Vec3} from "cannon-es";
 import {toCannonQuaternion, toCannonVec3} from "../cosmos-cannon";
 import _ from "lodash";
+import {UniformGridService} from "./uniform-grid.service";
 
 export class WorldDeltaService {
     
@@ -11,6 +12,9 @@ export class WorldDeltaService {
     private readonly _protoSphere: Sphere = new Sphere(1);
     
     private readonly _protoMaterial: Material = new Material('default');
+    
+    constructor(private uniformGridService: UniformGridService) {
+    }
     
     buildBody(candidate: IBody): Body {
 
@@ -43,6 +47,13 @@ export class WorldDeltaService {
         }
 
         body.material = candidate.material ?? _.cloneDeep(this._protoMaterial);
+
+        // TODO:T this is the end goal-ish - from Honours
+        // body.addEventListener('collide', eventsMap['collide']);
+        // Bind to ensure `this` context is carried through.
+        body.addEventListener('collide', this.uniformGridService.updateBodyFromCollision.bind(this.uniformGridService));
+
+        this.uniformGridService.addBodyToGrid(body);
         
         return body;
     }

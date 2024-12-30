@@ -1,5 +1,6 @@
 ﻿import {
     Body,
+    ContactEquation,
     Vec3
 } from 'cannon-es';
 
@@ -37,6 +38,45 @@ export class UniformGridService {
         console.log(`Added body ID ${body.id} to grid with KEY ${key}`);
     }
     
+    updateBodyFromCollision(collision: IContactEvent): void {
+        const { body, contact } = collision;
+        console.log(`Collision updating body ID ${body.id} ...`);
+
+        if (!body) {
+            console.log('Unable to update the grid without a valid body.');
+            return;
+        }
+
+        if (!body.position) {
+            console.log('Unable to update a body to the grid without a position.');
+            return;
+        }
+
+        if (!body.previousPosition) {
+            console.log('Unable to update without a previous position.');
+            return;
+        }
+
+        const oldKey = this.getCellKey(body.previousPosition);
+        const newKey = this.getCellKey(body.position);
+
+        if (oldKey !== newKey) {
+            // Remove from old cell
+            if (this._grid.has(oldKey)) {
+                const existingBodies = this._grid.get(oldKey) ?? [];
+                this._grid.set(oldKey, existingBodies.filter(o => o !== body));
+            }
+
+            // Add to new cell
+            this.addBodyToGrid(body);
+            console.log(`Updated body ID ${body.id} from KEY ${oldKey} to new KEY ${newKey}`);
+            return;
+        }
+
+        // Body remains in the same cell - nothing to update.
+        console.log(`NOTHING updated on body ID ${body.id} with position ${JSON.stringify(body.position)}`);
+    }
+    
     // TODO:T fire from listeners:
     // world.addEventListener('beginContact', ...);
     // world.addEventListener('endContact', ...);`
@@ -44,11 +84,16 @@ export class UniformGridService {
     // ALSO: https://github.com/schteppe/cannon.js/issues/351#issuecomment-343968143
     // Possibly useful: https://github.com/schteppe/cannon.js/issues/249#issuecomment-162441986
     updateBodyInGrid(body: Body, previousPosition: Vec3): void {
-        if (!body?.position)
-            throw new Error('Unable to add a body to the grid without a position.');
+        if (!body?.position) {
+            console.log('Unable to update a body to the grid without a position.');
+            return;
+        }
+            
 
-        if (!previousPosition)
-            throw new Error('Unable to update without a previous position - add instead.');
+        if (!previousPosition) {
+            console.log('Unable to update without a previous position - add instead.');
+            return;
+        }            
 
         const oldKey = this.getCellKey(previousPosition);
         const newKey = this.getCellKey(body.position);
@@ -65,5 +110,13 @@ export class UniformGridService {
         }
         
         // Body remains in the same cell - nothing to update.
+
+        console.log(`Updated body ID ${body.id} from KEY ${oldKey} to new KEY ${newKey}`);
     }
+}
+
+// TODO:T if this is correct, move this invaluable interface.
+interface IContactEvent {
+    body: Body; // The body involved in the collision
+    contact: ContactEquation; // Details about the collision
 }

@@ -15,7 +15,6 @@ import {
     IVector3
 } from 'cosmos-inf';
 import {mapToShapeType} from "../cosmos-cannon";
-import {UniformGridService} from "./uniform-grid.service";
 import {WorldCreationService} from "./world-creation.service";
 import {WorldDeltaService} from "./world-delta.service";
 
@@ -28,8 +27,7 @@ export class WorldService {
     private _stepInterval?: NodeJS.Timeout = undefined;
     
     constructor(private worldCreationService: WorldCreationService,
-        private worldDeltaService: WorldDeltaService,
-        private uniformGridService: UniformGridService
+        private worldDeltaService: WorldDeltaService
     ) {
     }
     
@@ -54,8 +52,6 @@ export class WorldService {
         const body = this.worldDeltaService.buildBody(candidate);
         
         this._world.addBody(body);
-        
-        this.uniformGridService.addBodyToGrid(body);
         
         return body.id;
     }
