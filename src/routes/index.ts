@@ -1,11 +1,16 @@
 ﻿import { Router } from 'express';
-import { WorldService } from "../services/world.service";
 import { WorldController } from "../controllers/worldController";
+import {WorldService} from "../services/world/world.service";
+import {UniformGridService} from "../services/world/uniform-grid.service";
+import {WorldCreationService} from "../services/world/world-creation.service";
 
 const router = Router();
 
 // Use a simple Dependency Injection pattern.
-const worldService = new WorldService();
+const uniformGridService = new UniformGridService();
+const worldCreationService = new WorldCreationService();
+const worldService = new WorldService(worldCreationService, uniformGridService);
+
 const worldController = new WorldController(worldService);
 
 router.post('/stage', worldController.stage);

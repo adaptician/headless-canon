@@ -3,8 +3,6 @@
     Box,
     ContactMaterial, 
     Material, 
-    Plane, 
-    SAPBroadphase, 
     Sphere, 
     Vec3, 
     World 
@@ -16,7 +14,9 @@ import {
     IWorld, 
     IVector3
 } from 'cosmos-inf';
-import {mapToShapeType} from "./cosmos-cannon";
+import {mapToShapeType} from "../cosmos-cannon";
+import {UniformGridService} from "./uniform-grid.service";
+import {WorldCreationService} from "./world-creation.service";
 
 
 export class WorldService {
@@ -24,16 +24,25 @@ export class WorldService {
     private _world : World = new World();
     private _identifier: string = '';
     
+    private _stepInterval?: NodeJS.Timeout = undefined;
+    
+    constructor(private worldCreationService: WorldCreationService,
+        private uniformGridService: UniformGridService) {
+    }
+    
     identify(): string {
         return this._identifier;
     }
     
     stage(id: string): void {
-        this.configure(id);
-        this.makeEarthly();
-        this.setDefaultContactMaterial();
+        this._world = this.worldCreationService.init();
         
-        this.addFloor();
+        this.worldCreationService.makeEarthly(this._world);
+        this.worldCreationService.setDefaultContactMaterial(this._world);
+        
+        this.worldCreationService.addFloor(this._world);
+        
+        this._identifier = id;
     }
     
     stream(): IWorld {
@@ -65,40 +74,18 @@ export class WorldService {
         }));
     }
     
-    private configure(id: string): void {
-        this._world = new World();
-        
-        this._world.broadphase = new SAPBroadphase(this._world);
-        this._world.allowSleep = true;
-        
-        this._identifier = id;
+    
+    
+    private step(deltaTime: number): void {
+        this._world.step(deltaTime);
     }
     
-    private makeEarthly(): void {        
-        this._world.gravity.set(0, - 9.82, 0);  // Earth-like gravity
+    private startStepping(): void {
+        this._stepInterval = setInterval(() => this.step(1 / 60), 1000 / 60);
     }
     
-    private setDefaultContactMaterial(): void {
-        const defaultMaterial = new Material('default');
-
-        this._world.defaultContactMaterial = new ContactMaterial(
-            defaultMaterial,
-            defaultMaterial,
-            {
-                friction: 0.1,
-                restitution: 0.7
-            }
-        );
-    }
-    
-    private addFloor(): void {
-        const floorShape = new Plane();
-        const floorBody = new Body();
-        floorBody.mass = 0;
-        floorBody.addShape(floorShape);
-        floorBody.quaternion.setFromAxisAngle(new Vec3(- 1, 0, 0), Math.PI * 0.5);
-        
-        this._world.addBody(floorBody);
+    private stopStepping(): void {
+        clearInterval(this._stepInterval);
     }
     
     //#region MOCKING

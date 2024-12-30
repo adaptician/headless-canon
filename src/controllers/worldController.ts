@@ -1,8 +1,8 @@
 ﻿import {NextFunction, Request, RequestHandler, Response} from 'express';
-import {WorldService} from "../services/world.service";
 import {plainToInstance} from "class-transformer";
 import {StageWorld} from "../services/dtos/stageworld.dto";
 import {validate} from "class-validator";
+import {WorldService} from "../services/world/world.service";
 
 export class WorldController {
     private worldService: WorldService;
