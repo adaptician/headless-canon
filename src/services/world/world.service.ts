@@ -45,6 +45,8 @@ export class WorldService {
         
         this.worldCreationService.addFloor(this._world);
         
+        this.startStepping();
+        
         this._identifier = id;
     }
     
