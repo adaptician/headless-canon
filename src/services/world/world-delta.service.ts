@@ -1,7 +1,7 @@
 ﻿import {IBody} from "cosmos/Body";
 import {SHAPE_TYPES} from "../../cosmos/statics";
 import {Body, Box, Material, Plane, Sphere, Vec3} from "cannon-es";
-import {toCannonQuaternion, toCannonVec3} from "../cosmos-cannon";
+import {IContactEvent, toCannonQuaternion, toCannonVec3} from "../cosmos-cannon";
 import _ from "lodash";
 import {UniformGridService} from "./uniform-grid.service";
 
@@ -51,7 +51,11 @@ export class WorldDeltaService {
         // TODO:T this is the end goal-ish - from Honours
         // body.addEventListener('collide', eventsMap['collide']);
         // Bind to ensure `this` context is carried through.
-        body.addEventListener('collide', this.uniformGridService.updateBodyFromCollision.bind(this.uniformGridService));
+        // eg. this.uniformGridService.updateBodyFromCollision.bind(this.uniformGridService)
+        // Alternatively, use arrow function.
+        body.addEventListener('collide', (collision: IContactEvent) => { 
+            this.uniformGridService.updateBodyFromCollision(collision); 
+        });
 
         this.uniformGridService.addBodyToGrid(body);
         

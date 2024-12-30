@@ -3,6 +3,7 @@
     ContactEquation,
     Vec3
 } from 'cannon-es';
+import {IContactEvent} from "../cosmos-cannon";
 
 /*
 * Uniform Grid: Divide the world into a fixed grid. 
@@ -115,8 +116,3 @@ export class UniformGridService {
     }
 }
 
-// TODO:T if this is correct, move this invaluable interface.
-interface IContactEvent {
-    body: Body; // The body involved in the collision
-    contact: ContactEquation; // Details about the collision
-}

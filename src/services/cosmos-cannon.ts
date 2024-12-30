@@ -1,4 +1,4 @@
-﻿import {SHAPE_TYPES as CANNON_SHAPE_TYPES, ShapeType as CannonShapeType, Vec3} from "cannon-es";
+﻿import {Body, ContactEquation, SHAPE_TYPES as CANNON_SHAPE_TYPES, ShapeType as CannonShapeType, Vec3} from "cannon-es";
 import {SHAPE_TYPES, ShapeType} from "../cosmos/statics";
 import {IQuaternion, IVector3} from "cosmos/Primitive";
 import {Quaternion} from "math/Quaternion";
@@ -48,4 +48,10 @@ export function toCannonQuaternion(quaternion: IQuaternion): Quaternion {
         z : quaternion.z,
         w : quaternion.w
     } as Quaternion;
+}
+
+// This does not seem to be documented anywhere that is easy to find.
+export interface IContactEvent {
+    body: Body; // The body involved in the collision
+    contact: ContactEquation; // Details about the collision
 }
