@@ -38,7 +38,7 @@ declare module "cosmos/Body" {
     import {ShapeType} from "./statics";
     
     export interface IBody {
-        id: number;
+        id?: number | undefined;
         shapeType: ShapeType | string;
         position?: IVector3 | undefined;
         velocity?: IVector3 | undefined;

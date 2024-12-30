@@ -1,20 +1,22 @@
-﻿
+﻿import {
+    Body,
+    Vec3
+} from 'cannon-es';
+
 /*
 * Uniform Grid: Divide the world into a fixed grid. 
 * Simple but can be inefficient if objects are clustered in certain areas.
 * */
-import {IVector3} from "cosmos/Primitive";
-import {IBody} from "cosmos/Body";
 
 // TODO:T once you have something working, looks like Cannon has OctetTree - check it out.
 export class UniformGridService {
-    private readonly _cellSize: number = 50; // Size of each cell
-    private readonly _worldSize: number = 500; // Size of the world
+    private readonly _cellSize: number = 2; // Size of each cell
+    private readonly _worldSize: number = 50; // Size of the world
     private readonly _cellCount: number = Math.ceil(this._worldSize / this._cellSize);
     
-    private _grid: Map<string, IBody[]> = new Map(); // Key: "x,y", Value: Array of objects in the cell
+    private _grid: Map<string, Body[]> = new Map(); // Key: "x,y", Value: Array of objects in the cell
 
-    getCellKey(position: IVector3): string {
+    getCellKey(position: Vec3): string {
         const x = Math.floor(position.x / this._cellSize);
         const y = Math.floor(position.y / this._cellSize);
         const z = Math.floor(position.z / this._cellSize);
@@ -22,7 +24,7 @@ export class UniformGridService {
         return `${x},${y},${z}`;
     }
     
-    addBodyToGrid(body: IBody): void {
+    addBodyToGrid(body: Body): void {
         if (!body?.position) 
             throw new Error('Unable to add a body to the grid without a position.');
         
@@ -31,6 +33,8 @@ export class UniformGridService {
         const existing = this._grid.get(key) ?? [];
         existing.push(body);
         this._grid.set(key, existing);
+        
+        console.log(`Added body ID ${body.id} to grid with KEY ${key}`);
     }
     
     // TODO:T fire from listeners:
@@ -39,7 +43,7 @@ export class UniformGridService {
     // body.addEventListener('collide', ...);
     // ALSO: https://github.com/schteppe/cannon.js/issues/351#issuecomment-343968143
     // Possibly useful: https://github.com/schteppe/cannon.js/issues/249#issuecomment-162441986
-    updateBodyInGrid(body: IBody, previousPosition: IVector3): void {
+    updateBodyInGrid(body: Body, previousPosition: Vec3): void {
         if (!body?.position)
             throw new Error('Unable to add a body to the grid without a position.');
 

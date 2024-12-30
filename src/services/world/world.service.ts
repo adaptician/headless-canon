@@ -17,6 +17,7 @@ import {
 import {mapToShapeType} from "../cosmos-cannon";
 import {UniformGridService} from "./uniform-grid.service";
 import {WorldCreationService} from "./world-creation.service";
+import {WorldDeltaService} from "./world-delta.service";
 
 
 export class WorldService {
@@ -27,7 +28,9 @@ export class WorldService {
     private _stepInterval?: NodeJS.Timeout = undefined;
     
     constructor(private worldCreationService: WorldCreationService,
-        private uniformGridService: UniformGridService) {
+        private worldDeltaService: WorldDeltaService,
+        private uniformGridService: UniformGridService
+    ) {
     }
     
     identify(): string {
@@ -43,6 +46,16 @@ export class WorldService {
         this.worldCreationService.addFloor(this._world);
         
         this._identifier = id;
+    }
+    
+    addBody(candidate: IBody): number {
+        const body = this.worldDeltaService.buildBody(candidate);
+        
+        this._world.addBody(body);
+        
+        this.uniformGridService.addBodyToGrid(body);
+        
+        return body.id;
     }
     
     stream(): IWorld {

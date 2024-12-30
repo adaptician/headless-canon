@@ -1,8 +1,9 @@
 ﻿import {NextFunction, Request, RequestHandler, Response} from 'express';
 import {plainToInstance} from "class-transformer";
-import {StageWorld} from "../services/dtos/stageworld.dto";
 import {validate} from "class-validator";
 import {WorldService} from "../services/world/world.service";
+import {StageWorld} from "../services/dtos/stage-world.dto";
+import {BuildBody} from "../services/dtos/add-body.dto";
 
 export class WorldController {
     private worldService: WorldService;
@@ -27,6 +28,27 @@ export class WorldController {
             this.worldService.stage(dto.id);
 
             res.json({ message: `A world has been staged with ID: ${this.worldService.identify()}` });
+        } catch (error) {
+            next(error); // Pass errors to the Express error handler
+        }
+    };
+    
+    addBody = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            console.log(`Request to ADD BODY ...`);
+            const dto = plainToInstance(BuildBody, req.body);
+
+            console.log(`ADD BODY request ${JSON.stringify(dto)}`);
+
+            const errors = await validate(dto);
+            if (errors.length > 0) {
+                res.status(400).json({ errors });
+                return;
+            }
+
+            const bodyId = this.worldService.addBody(dto);
+
+            res.json({ message: `Added body with id ${bodyId}` });
         } catch (error) {
             next(error); // Pass errors to the Express error handler
         }
