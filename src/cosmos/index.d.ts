@@ -1,13 +1,26 @@
 ﻿
 declare module "cosmos/Shape" {
-    import {IMaterial} from "cosmos/Primitive";
+    import {IMaterial, IVector3} from "cosmos/Primitive";
     import {ShapeType} from "./statics";
     
     export interface IShape {
         id: number;
-        type: ShapeType;
-        material: IMaterial;
-        fake: string;
+        colorHexCode?: number | undefined;
+    }
+    
+    export interface IPlaneShape extends IShape {    
+        width: number;
+        height: number;
+    }
+    
+    export interface IBoxShape extends IShape {
+        width: number;
+        height: number;
+        depth: number;
+    }
+    
+    export interface ISphereShape extends IShape {
+        radius: number;
     }
 }
 
@@ -36,15 +49,18 @@ declare module "cosmos/Primitive" {
 declare module "cosmos/Body" {
     import { IVector3, IMaterial, IQuaternion } from "cosmos/Primitive";
     import {ShapeType} from "./statics";
+    import {IPlaneShape, IBoxShape, ISphereShape} from "cosmos/Shape";
     
     export interface IBody {
-        id?: number | undefined;
+        id: number;
         shapeType: ShapeType | string;
+        shapeOptions?: IPlaneShape | IBoxShape | ISphereShape;
         position?: IVector3 | undefined;
         velocity?: IVector3 | undefined;
         mass?: number | undefined;
         material?: IMaterial | undefined;
         quaternion?: IQuaternion | undefined;
+        scale?: IVector3 | undefined;
     }
 }
 

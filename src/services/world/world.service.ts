@@ -1,11 +1,11 @@
 ﻿import {
-    Body, 
+    Body,
     Box,
-    ContactMaterial, 
-    Material, 
-    Sphere, 
-    Vec3, 
-    World 
+    ContactMaterial,
+    Material, Plane,
+    Sphere,
+    Vec3,
+    World
 } from 'cannon-es';
 import {
     IBody, 
@@ -17,6 +17,9 @@ import {
 import {mapToShapeType} from "../cosmos-cannon";
 import {WorldCreationService} from "./world-creation.service";
 import {WorldDeltaService} from "./world-delta.service";
+import {SHAPE_TYPES} from "../../cosmos/statics";
+import {IBoxShape, IPlaneShape, ISphereShape} from "cosmos/Shape";
+import _ from "lodash";
 
 
 export class WorldService {
@@ -58,15 +61,72 @@ export class WorldService {
     
     stream(): IWorld {
         const bodies = this._world.bodies.map(body => {
+            const firstShape = (body.shapes?.length ?? 0) > 0 ? body.shapes[0] : null;
+            
+            if (!firstShape) {
+                console.log(`Unable to map body without a shape ${JSON.stringify(body)}`);
+                // Don't break the stream for one invalid body. Continue to the next.
+                return;
+            }
+            
+            const shapeType = mapToShapeType(firstShape.type);
+            
+            let shapeOptions = null;
+            let scale;
+            switch (shapeType) {
+                case SHAPE_TYPES.PLANE:
+                    const plane = _.clone(firstShape) as Plane;
+                    
+                    shapeOptions = {
+                        // In Cannon, the plane is infinite, and does not provide width and height; setting generous defaults.
+                        width: 100,
+                        height: 100,
+                        colorHexCode: 0xeeeecc
+                    } as IPlaneShape;
+
+                    scale = { x: 100, y: 100, z: 0 } as IVector3;
+                    
+                    break;
+                case SHAPE_TYPES.BOX:
+                    const box = _.clone(firstShape) as Box;
+                    
+                    shapeOptions = {
+                        width: box.halfExtents.x,
+                        height: box.halfExtents.y,
+                        depth: box.halfExtents.z,
+                        colorHexCode: 0xffae00
+                    } as IBoxShape;
+
+
+                    scale = { x: box.halfExtents.x, y: box.halfExtents.y, z: box.halfExtents.z } as IVector3;
+                    
+                    break;
+                case SHAPE_TYPES.SPHERE:
+                    const sphere = _.clone(firstShape) as Sphere;
+                    
+                    shapeOptions = {
+                        radius: sphere.radius,
+                        colorHexCode: 0x003cff
+                    } as ISphereShape;
+
+
+                    scale = { x: sphere.radius, y: sphere.radius, z: sphere.radius } as IVector3;
+                    
+                    break;
+                case SHAPE_TYPES.UNKNOWN:
+                default:
+                    return;
+            }
             
             return {
                 id: body.id,
-                // TODO:T once this has moved to event-driven flow, improve upon this janky code.
-                shapeType: mapToShapeType(body.shapes[0].type),
+                shapeType: shapeType,
+                shapeOptions: shapeOptions,
                 mass: body.mass,
                 material: body.material as IMaterial,
                 position: body.position as IVector3,
-                quaternion: body.quaternion as IQuaternion
+                quaternion: body.quaternion as IQuaternion,
+                scale: scale
             } as IBody;
         }, []);
         

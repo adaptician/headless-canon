@@ -4,13 +4,10 @@ import {Body, Box, Material, Plane, Sphere, Vec3} from "cannon-es";
 import {IContactEvent, toCannonQuaternion, toCannonVec3} from "../cosmos-cannon";
 import _ from "lodash";
 import {UniformGridService} from "./uniform-grid.service";
+import {IBoxShape, IPlaneShape, ISphereShape} from "cosmos/Shape";
 
 export class WorldDeltaService {
-    
-    private readonly _protoPlane: Plane = new Plane();
-    private readonly _protoBox: Box = new Box(new Vec3(1, 1, 1));
-    private readonly _protoSphere: Sphere = new Sphere(1);
-    
+        
     private readonly _protoMaterial: Material = new Material('default');
     
     constructor(private uniformGridService: UniformGridService) {
@@ -20,16 +17,26 @@ export class WorldDeltaService {
 
         // Do NOT clone a body prototype, otherwise id is the same for all bodies.
         let body = new Body({ mass: candidate.mass ?? 1 });
+        let shape;
         
         switch (candidate.shapeType) {
             case SHAPE_TYPES.PLANE:
-                body.addShape(_.cloneDeep(this._protoPlane));
+                const planeOptions = _.cloneDeep(candidate.shapeOptions) as IPlaneShape;
+                shape = new Plane();
+                
+                body.addShape(shape);
                 break;
             case SHAPE_TYPES.BOX:
-                body.addShape(_.cloneDeep(this._protoBox));
+                const boxOptions = _.cloneDeep(candidate.shapeOptions) as IBoxShape;
+                shape = new Box(new Vec3(boxOptions.width, boxOptions.height, boxOptions.depth));
+                
+                body.addShape(shape);
                 break;
             case SHAPE_TYPES.SPHERE:
-                body.addShape(_.cloneDeep(this._protoSphere));
+                const sphereOptions = _.cloneDeep(candidate.shapeOptions) as ISphereShape;
+                shape = new Sphere(sphereOptions.radius);
+                
+                body.addShape(shape);
                 break;
             case SHAPE_TYPES.UNKNOWN:
             default:
