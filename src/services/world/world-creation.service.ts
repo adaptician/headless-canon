@@ -13,7 +13,8 @@ export class WorldCreationService {
     }
 
     makeEarthly(world: World): void {
-        world.gravity.set(0, - 9.82, 0);  // Earth-like gravity
+        // world.gravity.set(0, - 9.82, 0);  // Earth-like gravity
+        world.gravity.set(0, -100, 0);  // less bouncy
     }
 
     setDefaultContactMaterial(world: World): void {

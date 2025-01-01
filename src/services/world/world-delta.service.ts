@@ -1,4 +1,4 @@
-﻿import {IBody} from "cosmos/Body";
+﻿import {IBuildBody} from "cosmos/Body";
 import {SHAPE_TYPES} from "../../cosmos/statics";
 import {Body, Box, Material, Plane, Sphere, Vec3} from "cannon-es";
 import {IContactEvent, toCannonQuaternion, toCannonVec3} from "../cosmos-cannon";
@@ -13,7 +13,7 @@ export class WorldDeltaService {
     constructor(private uniformGridService: UniformGridService) {
     }
     
-    buildBody(candidate: IBody): Body {
+    buildBody(candidate: IBuildBody): Body {
 
         // Do NOT clone a body prototype, otherwise id is the same for all bodies.
         let body = new Body({ mass: candidate.mass ?? 1 });

@@ -1,8 +1,9 @@
 ﻿import {IsNumber, IsString} from 'class-validator';
 import {IMaterial, IQuaternion, IVector3} from "cosmos/Primitive";
-import {IBody} from "cosmos/Body";
+import {IBody, IBuildBody} from "cosmos/Body";
+import {IBoxShape, IPlaneShape, ISphereShape} from "cosmos/Shape";
 
-export class BuildBody implements IBody {
+export class BuildBody implements IBuildBody {
     @IsNumber()
     mass!: number;
     
@@ -14,4 +15,6 @@ export class BuildBody implements IBody {
     quaternion?: IQuaternion;
     
     material?: IMaterial;
+
+    shapeOptions?: IPlaneShape | IBoxShape | ISphereShape;
 }

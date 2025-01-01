@@ -71,20 +71,17 @@ export class WorldService {
             
             const shapeType = mapToShapeType(firstShape.type);
             
-            let shapeOptions = null;
-            let scale;
+            let shapeOptions = null;   
             switch (shapeType) {
                 case SHAPE_TYPES.PLANE:
                     const plane = _.clone(firstShape) as Plane;
                     
                     shapeOptions = {
                         // In Cannon, the plane is infinite, and does not provide width and height; setting generous defaults.
-                        width: 100,
-                        height: 100,
+                        width: 10,
+                        height: 10,
                         colorHexCode: 0xeeeecc
                     } as IPlaneShape;
-
-                    scale = { x: 100, y: 100, z: 0 } as IVector3;
                     
                     break;
                 case SHAPE_TYPES.BOX:
@@ -96,9 +93,6 @@ export class WorldService {
                         depth: box.halfExtents.z,
                         colorHexCode: 0xffae00
                     } as IBoxShape;
-
-
-                    scale = { x: box.halfExtents.x, y: box.halfExtents.y, z: box.halfExtents.z } as IVector3;
                     
                     break;
                 case SHAPE_TYPES.SPHERE:
@@ -108,15 +102,18 @@ export class WorldService {
                         radius: sphere.radius,
                         colorHexCode: 0x003cff
                     } as ISphereShape;
-
-
-                    scale = { x: sphere.radius, y: sphere.radius, z: sphere.radius } as IVector3;
                     
                     break;
                 case SHAPE_TYPES.UNKNOWN:
                 default:
                     return;
             }
+
+            const scale = {
+                x: body.aabb.lowerBound.x - body.aabb.upperBound.x,
+                y: body.aabb.lowerBound.y - body.aabb.upperBound.y,
+                z: body.aabb.lowerBound.z - body.aabb.upperBound.z
+            } as IVector3;
             
             return {
                 id: body.id,

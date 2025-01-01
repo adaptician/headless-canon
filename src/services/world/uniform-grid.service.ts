@@ -1,6 +1,5 @@
 ﻿import {
     Body,
-    ContactEquation,
     Vec3
 } from 'cannon-es';
 import {IContactEvent} from "../cosmos-cannon";
@@ -10,12 +9,6 @@ import {IContactEvent} from "../cosmos-cannon";
 * Simple but can be inefficient if objects are clustered in certain areas.
 * */
 
-// START HERE!
-// Just read up on this - don't get sidetracked now.
-// TODO:T once you have something working, looks like Cannon has OctetTree - check it out.
-// NEXT is RabbitMQ to remove polling.
-// PLEASE add world identifier now already - we will need this later. This will be the partitioning id.
-// Maybe read up a bit on this as well.
 export class UniformGridService {
     private readonly _cellSize: number = 2; // Size of each cell
     private readonly _worldSize: number = 50; // Size of the world
@@ -83,41 +76,5 @@ export class UniformGridService {
         console.log(`NOTHING updated on body ID ${body.id} with position ${JSON.stringify(body.position)}`);
     }
     
-    // TODO:T fire from listeners:
-    // world.addEventListener('beginContact', ...);
-    // world.addEventListener('endContact', ...);`
-    // body.addEventListener('collide', ...);
-    // ALSO: https://github.com/schteppe/cannon.js/issues/351#issuecomment-343968143
-    // Possibly useful: https://github.com/schteppe/cannon.js/issues/249#issuecomment-162441986
-    updateBodyInGrid(body: Body, previousPosition: Vec3): void {
-        if (!body?.position) {
-            console.log('Unable to update a body to the grid without a position.');
-            return;
-        }
-            
-
-        if (!previousPosition) {
-            console.log('Unable to update without a previous position - add instead.');
-            return;
-        }            
-
-        const oldKey = this.getCellKey(previousPosition);
-        const newKey = this.getCellKey(body.position);
-
-        if (oldKey !== newKey) {
-            // Remove from old cell
-            if (this._grid.has(oldKey)) {
-                const existingBodies = this._grid.get(oldKey) ?? [];
-                this._grid.set(oldKey, existingBodies.filter(o => o !== body));
-            }
-
-            // Add to new cell
-            this.addBodyToGrid(body);
-        }
-        
-        // Body remains in the same cell - nothing to update.
-
-        console.log(`Updated body ID ${body.id} from KEY ${oldKey} to new KEY ${newKey}`);
-    }
 }
 

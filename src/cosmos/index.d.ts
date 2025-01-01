@@ -50,9 +50,18 @@ declare module "cosmos/Body" {
     import { IVector3, IMaterial, IQuaternion } from "cosmos/Primitive";
     import {ShapeType} from "./statics";
     import {IPlaneShape, IBoxShape, ISphereShape} from "cosmos/Shape";
+
+    export interface IBuildBody {
+        shapeType: ShapeType | string;
+        position?: IVector3 | undefined;
+        mass?: number | undefined;
+        material?: IMaterial | undefined;
+        quaternion?: IQuaternion | undefined;
+        shapeOptions?: IPlaneShape | IBoxShape | ISphereShape;
+    }
     
     export interface IBody {
-        id: number;
+        id?: number | undefined;
         shapeType: ShapeType | string;
         shapeOptions?: IPlaneShape | IBoxShape | ISphereShape;
         position?: IVector3 | undefined;
