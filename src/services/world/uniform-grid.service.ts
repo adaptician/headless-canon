@@ -10,7 +10,12 @@ import {IContactEvent} from "../cosmos-cannon";
 * Simple but can be inefficient if objects are clustered in certain areas.
 * */
 
+// START HERE!
+// Just read up on this - don't get sidetracked now.
 // TODO:T once you have something working, looks like Cannon has OctetTree - check it out.
+// NEXT is RabbitMQ to remove polling.
+// PLEASE add world identifier now already - we will need this later. This will be the partitioning id.
+// Maybe read up a bit on this as well.
 export class UniformGridService {
     private readonly _cellSize: number = 2; // Size of each cell
     private readonly _worldSize: number = 50; // Size of the world
