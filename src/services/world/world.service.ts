@@ -72,6 +72,7 @@ export class WorldService {
             const shapeType = mapToShapeType(firstShape.type);
             
             let shapeOptions = null;   
+            let scale;
             switch (shapeType) {
                 case SHAPE_TYPES.PLANE:
                     const plane = _.clone(firstShape) as Plane;
@@ -83,6 +84,8 @@ export class WorldService {
                         colorHexCode: 0xeeeecc
                     } as IPlaneShape;
                     
+                    scale = { x: 10, y: 10, z: 0 } as IVector3;
+                    
                     break;
                 case SHAPE_TYPES.BOX:
                     const box = _.clone(firstShape) as Box;
@@ -93,6 +96,12 @@ export class WorldService {
                         depth: box.halfExtents.z,
                         colorHexCode: 0xffae00
                     } as IBoxShape;
+
+                    scale = {
+                        x: body.aabb.lowerBound.x - body.aabb.upperBound.x,
+                        y: body.aabb.lowerBound.y - body.aabb.upperBound.y,
+                        z: body.aabb.lowerBound.z - body.aabb.upperBound.z
+                    } as IVector3;
                     
                     break;
                 case SHAPE_TYPES.SPHERE:
@@ -102,18 +111,18 @@ export class WorldService {
                         radius: sphere.radius,
                         colorHexCode: 0x003cff
                     } as ISphereShape;
+
+                    scale = {
+                        x: body.aabb.lowerBound.x - body.aabb.upperBound.x,
+                        y: body.aabb.lowerBound.y - body.aabb.upperBound.y,
+                        z: body.aabb.lowerBound.z - body.aabb.upperBound.z
+                    } as IVector3;
                     
                     break;
                 case SHAPE_TYPES.UNKNOWN:
                 default:
                     return;
             }
-
-            const scale = {
-                x: body.aabb.lowerBound.x - body.aabb.upperBound.x,
-                y: body.aabb.lowerBound.y - body.aabb.upperBound.y,
-                z: body.aabb.lowerBound.z - body.aabb.upperBound.z
-            } as IVector3;
             
             return {
                 id: body.id,
