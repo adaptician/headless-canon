@@ -9,6 +9,26 @@ import {IContactEvent} from "../cosmos-cannon";
 * Simple but can be inefficient if objects are clustered in certain areas.
 * */
 
+/*
+* TODO:T thinking
+*  Given that updates will only be pushed according to area of interest, the manager for the partitioned world should
+* do the publishing to the bus.
+* Bearing in mind that we will create a separate service for communication with the bus, which other services can use,
+* but ANY change to position etc SHOULD run through here. IRRESPECTIVE of whether it's location in the grid changes,
+* we publish that something happened. If the object moved or stayed, users interested in this area will hear about it.
+* 
+* Prompted by a collision this would then cover changes in position and rotation caused by a collision.
+* 
+* Prompted by ray tracing? Ray tracing is a rendered concern, to decide if an object is "hit" by input.
+* The action resulting from that input needs to be sent through the event API.
+* If it's a collision, it will trigger as above.
+* If it's something else, like a change to colour / texture or some other property, that needs to be managed by something
+* else, or included in the physics engine, depending on if it's a concern of physics. We don't need to worry about this
+* just now.
+* 
+* For simplicity, we are going to focus on collisions only, even once we start dealing with user input.
+* */
+
 export class UniformGridService {
     private readonly _cellSize: number = 2; // Size of each cell
     private readonly _worldSize: number = 50; // Size of the world
