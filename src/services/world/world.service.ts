@@ -7,19 +7,21 @@
     Vec3,
     World
 } from 'cannon-es';
-import {
-    IBody, 
-    IMaterial, 
-    IQuaternion, 
-    IWorld, 
-    IVector3
-} from 'cosmos-inf';
 import {mapToShapeType} from "../cosmos-cannon";
 import {WorldCreationService} from "./world-creation.service";
 import {WorldDeltaService} from "./world-delta.service";
 import {SHAPE_TYPES} from "../../cosmos/statics";
-import {IBoxShape, IPlaneShape, ISphereShape} from "cosmos/Shape";
 import _ from "lodash";
+import {COSMOS} from "../../cosmos";
+import IBody = COSMOS.IBody;
+import IWorld = COSMOS.IWorld;
+import IPlaneShape = COSMOS.IPlaneShape;
+import IVector3 = COSMOS.IVector3;
+import IBoxShape = COSMOS.IBoxShape;
+import ISphereShape = COSMOS.ISphereShape;
+import IMaterial = COSMOS.IMaterial;
+import IQuaternion = COSMOS.IQuaternion;
+import IBuildBody = COSMOS.IBuildBody;
 
 
 export class WorldService {
@@ -51,7 +53,7 @@ export class WorldService {
         this._identifier = id;
     }
     
-    addBody(candidate: IBody): number {
+    addBody(candidate: IBuildBody): number {
         const body = this.worldDeltaService.buildBody(candidate);
         
         this._world.addBody(body);

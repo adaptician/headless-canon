@@ -1,10 +1,13 @@
-﻿import {IBuildBody} from "cosmos/Body";
-import {SHAPE_TYPES} from "../../cosmos/statics";
+﻿import {SHAPE_TYPES} from "../../cosmos/statics";
 import {Body, Box, Material, Plane, Sphere, Vec3} from "cannon-es";
 import {IContactEvent, toCannonQuaternion, toCannonVec3} from "../cosmos-cannon";
 import _ from "lodash";
 import {UniformGridService} from "./uniform-grid.service";
-import {IBoxShape, IPlaneShape, ISphereShape} from "cosmos/Shape";
+import {COSMOS} from "../../cosmos";
+import IBuildBody = COSMOS.IBuildBody;
+import IBoxShape = COSMOS.IBoxShape;
+import IPlaneShape = COSMOS.IPlaneShape;
+import ISphereShape = COSMOS.ISphereShape;
 
 export class WorldDeltaService {
         
