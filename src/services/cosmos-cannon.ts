@@ -1,7 +1,8 @@
-﻿import {Body, ContactEquation, SHAPE_TYPES as CANNON_SHAPE_TYPES, ShapeType as CannonShapeType, Vec3} from "cannon-es";
+﻿import {Body, ContactEquation, SHAPE_TYPES as CANNON_SHAPE_TYPES, ShapeType as CannonShapeType, Vec3, Quaternion} from "cannon-es";
 import {SHAPE_TYPES, ShapeType} from "../cosmos/statics";
-import {IQuaternion, IVector3} from "cosmos/Primitive";
-import {Quaternion} from "math/Quaternion";
+import {COSMOS} from "../cosmos";
+import IVector3 = COSMOS.IVector3;
+import IQuaternion = COSMOS.IQuaternion;
 
 export function mapToShapeType(cannonType: CannonShapeType | 0): ShapeType {
     switch (cannonType) {

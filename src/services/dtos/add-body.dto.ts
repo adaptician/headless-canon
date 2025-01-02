@@ -1,7 +1,12 @@
 ﻿import {IsNumber, IsString} from 'class-validator';
-import {IMaterial, IQuaternion, IVector3} from "cosmos/Primitive";
-import {IBody, IBuildBody} from "cosmos/Body";
-import {IBoxShape, IPlaneShape, ISphereShape} from "cosmos/Shape";
+import {COSMOS} from "../../cosmos";
+import IBuildBody = COSMOS.IBuildBody;
+import IVector3 = COSMOS.IVector3;
+import IQuaternion = COSMOS.IQuaternion;
+import IMaterial = COSMOS.IMaterial;
+import IPlaneShape = COSMOS.IPlaneShape;
+import IBoxShape = COSMOS.IBoxShape;
+import ISphereShape = COSMOS.ISphereShape;
 
 export class BuildBody implements IBuildBody {
     @IsNumber()
