@@ -6,7 +6,7 @@ export interface IEventBusConnection {
     connection: Connection;
     channel: Channel;
 
-    publish(routingKey: string, message: any): Promise<void>;
+    broadcast(routingKey: string, message: any): Promise<void>;
 }
 
 class RabbitMQConnection implements IEventBusConnection {
@@ -34,15 +34,15 @@ class RabbitMQConnection implements IEventBusConnection {
             console.error(`Not connected to MQ Server`);
         }
     }
-
-    async publish(routingKey: string, message: any): Promise<void> {
+    
+    async broadcast(routingKey: string, message: any): Promise<void> {
         try {
             if (!this.channel) {
                 await this._connect();
             }
 
-            const exchangeName = 'cannon-test'; // Name of the exchange
-            const exchangeType = 'fanout'; // Type of exchange (fanout for broadcasting)
+            const exchangeName = 'universe'; // Name of the exchange
+            const exchangeType = 'topic'; // Type of exchange
             
             await this.channel.assertExchange(exchangeName, exchangeType, { durable: true });
             console.log(`Exchange "${exchangeName}" of type "${exchangeType}" is ready`);

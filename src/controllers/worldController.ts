@@ -27,7 +27,10 @@ export class WorldController {
 
             this.worldService.stage(dto.id);
 
-            res.json({ message: `A world has been staged with ID: ${this.worldService.identify()}` });
+            const worldId = this.worldService.identify();
+            console.log(`A world has been staged with ID: ${worldId}`);
+            
+            res.json({ data: { worldId: worldId } });
         } catch (error) {
             next(error); // Pass errors to the Express error handler
         }

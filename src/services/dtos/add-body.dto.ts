@@ -9,6 +9,9 @@ import IBoxShape = COSMOS.IBoxShape;
 import ISphereShape = COSMOS.ISphereShape;
 
 export class BuildBody implements IBuildBody {
+    @IsString()
+    worldId!: string;
+    
     @IsNumber()
     mass!: number;
     

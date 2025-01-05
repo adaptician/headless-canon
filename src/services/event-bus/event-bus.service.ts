@@ -1,14 +1,13 @@
-﻿import { sendNotification } from "./notification";
+﻿import {INotification, publish} from "./notification";
 
 export class EventBusService {
     
-    async send() {
-        const newNotification = {
-            title: "You have received new notification",
-            description:
-                "You have received new incmoing notification from the producer service",
+    async publish(routingKey: string, data: string, metadata?: string) {
+        const newNotification: INotification = {
+            data: data,
+            metadata: metadata
         };
 
-        await sendNotification(newNotification);
+        await publish(routingKey, newNotification);
     }
 }

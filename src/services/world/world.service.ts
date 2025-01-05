@@ -61,6 +61,7 @@ export class WorldService {
         return body.id;
     }
     
+    // TODO:T OBSOLETE - remove
     stream(): IWorld {
         const bodies = this._world.bodies.map(body => {
             const firstShape = (body.shapes?.length ?? 0) > 0 ? body.shapes[0] : null;
@@ -157,6 +158,8 @@ export class WorldService {
     
     private step(deltaTime: number): void {
         this._world.step(deltaTime);
+        
+        this.worldDeltaService.stepWorld(this._identifier);
     }
     
     private startStepping(): void {

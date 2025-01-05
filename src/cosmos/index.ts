@@ -23,6 +23,7 @@ export namespace COSMOS {
     }
 
     export interface IBuildBody {
+        worldId: string;
         shapeType: ShapeType | string;
         position?: IVector3 | undefined;
         mass?: number | undefined;

@@ -1,21 +1,18 @@
-﻿import { env } from 'node:process';
-
-import singleConnection from "./connection";
+﻿import singleConnection from "./connection";
 
 export type INotification = {
-    title: string;
-    description: string;
+    data: string;
+    metadata?: string | undefined;
 };
 
-export const sendNotification = async (notification: INotification) => {
-    const key = env.NOTIFICATION_QUEUE;
-    console.log(`>>> sending notification to queue ${key} >>`);
+export const publish = async (routingKey: string, notification: INotification) => {
+    console.log(`>>> sending notification to route ${routingKey} >>`);
     
-    if (!key) {
-        throw Error('Unable to send notification - queue is invalid.');
+    if (!routingKey || routingKey.length <= 0) {
+        throw Error('Unable to send notification - routing key is invalid.');
     }
     
-    await singleConnection.publish(key, notification);
+    await singleConnection.broadcast(routingKey, notification);
 
     console.log(`Sent the notification to consumer`);
 };

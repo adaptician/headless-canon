@@ -2,7 +2,7 @@
     Body,
     Vec3
 } from 'cannon-es';
-import {IContactEvent} from "../cosmos-cannon";
+import {getStreamableBody, IContactEvent} from "../cosmos-cannon";
 import {EventBusService} from "../event-bus/event-bus.service";
 
 /*
@@ -36,7 +36,7 @@ export class UniformGridService {
     private readonly _cellCount: number = Math.ceil(this._worldSize / this._cellSize);
     
     private _grid: Map<string, Body[]> = new Map(); // Key: "x,y", Value: Array of objects in the cell
-
+    
     constructor(private _eventBusService: EventBusService) {
     }
     
@@ -48,7 +48,7 @@ export class UniformGridService {
         return `${x},${y},${z}`;
     }
     
-    addBodyToGrid(body: Body): void {
+    addBodyToGrid(worldId: string, body: Body): void {
         if (!body?.position) 
             throw new Error('Unable to add a body to the grid without a position.');
         
@@ -59,9 +59,17 @@ export class UniformGridService {
         this._grid.set(key, existing);
         
         console.log(`Added body ID ${body.id} to grid with KEY ${key}`);
+
+        const streamableBody = getStreamableBody(body);
+        if (streamableBody) {
+            this._eventBusService.publish(
+                // TODO:T you need to create a routing key builder for easier re-use
+                `world.${worldId}.unit.${key}.physics.addBody`
+                , JSON.stringify(streamableBody));
+        }
     }
     
-    updateBodyFromCollision(collision: IContactEvent): void {
+    updateBodyFromCollision(worldId: string, collision: IContactEvent): void {
         const { body, contact } = collision;
         console.log(`Collision updating body ID ${body.id} ...`);
 
@@ -91,18 +99,69 @@ export class UniformGridService {
             }
 
             // Add to new cell
-            this.addBodyToGrid(body);
+            this.addBodyToGrid(worldId, body);
             console.log(`Updated body ID ${body.id} from KEY ${oldKey} to new KEY ${newKey}`);
             return;
         }
 
         // Body remains in the same cell - nothing to update in the grid.
         console.log(`NOTHING updated on body ID ${body.id} with position ${JSON.stringify(body.position)}`);
-        
+
         // Nonetheless, other properties may have been affected; 
         // therefore, in all cases, we notify observers of a collision.
-        this._eventBusService.send(); // TODO:T is it ok not to await?
+        const streamableBody = getStreamableBody(body);        
+        if (streamableBody) {
+            this._eventBusService.publish(
+                // TODO:T you need to create a routing key builder for easier re-use
+                `world.${worldId}.unit.${newKey}.physics.collision`
+                , JSON.stringify(streamableBody));
+        }
+
+        // Ref: https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html
+        
+        // TO WORLD exchange
+        // TEMPLATE world.{worldId}.unit.{aoiKey}.{eventCategory}.{eventType}
+        //                    ^ session key
+        // EXAMPLES
+        //          world.simulator-x23.unit.3,2,0.physics.collision
+        //          world.simulator-x23.unit.1,1,0.physics.transform // perhaps as a result of user or system input
+        // Why would we care? Perhaps we want a particular alert if something enters our AoI - granular events give us more control.
+        //          world.simulator-x23.unit.5,0,1.physics.scale // perhaps as a result of user or system input
+        // Why would we care? Perhaps to auto- or prompt a perspective change - zoom out to see the large object.
+        //          world.simulator-x23.unit.3,3,0.render.color
+        // Why would we care? Perhaps the user is color-blind, or prefer a dark-theme. They can ignore these, or intercept them.
+        //          world.simulator-x23.unit.3,3,0.render.material
+        // Why would we care? Trigger retrieval of texture from cache - AVOID sending large payloads via the bus itself.
+        //          world.simulator-x23.unit.2,2,0.player.enter
+        // Why would we care? Perhaps we want to welcome them with fanfare.
+        //          world.simulator-x23.unit.2,2,0.player.exit
+        // Why would we care? Perhaps they had duties, which must now be taken up by those remaining.
+        // We broadcast interest in world, unit, category, and type
+        // For a clients we expect topic separation to focus on the end words, as per AoI, category and type.
+        // 
+        
+        // Routing Keys:
+        // Delimiter: .
+        // * = wildcard (placeholder for anything)
+        // # = match zero or more words
     }
     
+    /*
+    * Unfortunately this seems to be required with CannonJS;
+    * If the engine provides us a way to hook events in a granular manner, we could avoid this.
+    * */
+    stepGridUpdate(worldId: string): void {
+        this._grid.forEach((bodies, key) => {
+            bodies.forEach(body => {
+                const streamableBody = getStreamableBody(body);
+                if (streamableBody) {
+                    this._eventBusService.publish(
+                        // TODO:T you need to create a routing key builder for easier re-use
+                        `world.${worldId}.unit.${key}.physics.step`
+                        , JSON.stringify(streamableBody));
+                }
+            });
+        });
+    }
 }
 

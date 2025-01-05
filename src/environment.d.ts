@@ -7,7 +7,6 @@
             BUS_PASSWORD?: string;
             BUS_HOST?: string;
             BUS_COMMUNICATION_PORT?: string;
-            BUS_NOTIFICATION_QUEUE?: string;
         }
     }
 }

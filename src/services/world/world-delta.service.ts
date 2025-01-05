@@ -64,11 +64,19 @@ export class WorldDeltaService {
         // eg. this.uniformGridService.updateBodyFromCollision.bind(this.uniformGridService)
         // Alternatively, use arrow function.
         body.addEventListener('collide', (collision: IContactEvent) => { 
-            this.uniformGridService.updateBodyFromCollision(collision); 
+            this.uniformGridService.updateBodyFromCollision(candidate.worldId, collision); 
         });
+        
+        // The problem with the above event listener is that it only fires when the actual collision occurs.
+        // Any residual effects that do not include an actual collision, do not trigger the event to fire.
+        // So renderings change seldom and then get frozen.
 
-        this.uniformGridService.addBodyToGrid(body);
+        this.uniformGridService.addBodyToGrid(candidate.worldId, body);
         
         return body;
+    }
+    
+    stepWorld(worldId: string) {
+        this.uniformGridService.stepGridUpdate(worldId);
     }
 }
