@@ -79,4 +79,8 @@ export class WorldDeltaService {
     stepWorld(worldId: string) {
         this.uniformGridService.stepGridUpdate(worldId);
     }
+    
+    clear(): void {
+        this.uniformGridService.clearGrid();
+    }
 }

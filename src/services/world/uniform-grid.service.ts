@@ -163,5 +163,9 @@ export class UniformGridService {
             });
         });
     }
+    
+    clearGrid(): void {
+        this._grid = new Map();
+    }
 }
 

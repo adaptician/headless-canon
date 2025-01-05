@@ -19,6 +19,7 @@ const worldController = new WorldController(worldService);
 
 router.post('/stage', worldController.stage);
 router.post('/addBody', worldController.addBody);
+router.get('/clear', worldController.clear);
 
 // WIP
 router.get('/stream', worldController.stream);

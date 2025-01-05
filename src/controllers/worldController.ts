@@ -57,6 +57,21 @@ export class WorldController {
         }
     };
 
+    clear: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            console.log(`Request to CLEAR ...`);
+
+            this.worldService.clear();
+
+            const worldId = this.worldService.identify();
+            console.log(`The world has been cleared - ID: ${worldId}`);
+
+            res.json({ data: { worldId: worldId } });
+        } catch (error) {
+            next(error); // Pass errors to the Express error handler
+        }
+    };
+
     stream = (req: Request, res: Response) => {
         console.log(`Request to STREAM ...`);
         const stream = this.worldService.stream();
