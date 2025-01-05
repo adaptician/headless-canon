@@ -3,6 +3,7 @@
     Vec3
 } from 'cannon-es';
 import {IContactEvent} from "../cosmos-cannon";
+import {EventBusService} from "../event-bus/event-bus.service";
 
 /*
 * Uniform Grid: Divide the world into a fixed grid. 
@@ -36,6 +37,9 @@ export class UniformGridService {
     
     private _grid: Map<string, Body[]> = new Map(); // Key: "x,y", Value: Array of objects in the cell
 
+    constructor(private _eventBusService: EventBusService) {
+    }
+    
     getCellKey(position: Vec3): string {
         const x = Math.floor(position.x / this._cellSize);
         const y = Math.floor(position.y / this._cellSize);
@@ -92,8 +96,12 @@ export class UniformGridService {
             return;
         }
 
-        // Body remains in the same cell - nothing to update.
+        // Body remains in the same cell - nothing to update in the grid.
         console.log(`NOTHING updated on body ID ${body.id} with position ${JSON.stringify(body.position)}`);
+        
+        // Nonetheless, other properties may have been affected; 
+        // therefore, in all cases, we notify observers of a collision.
+        this._eventBusService.send(); // TODO:T is it ok not to await?
     }
     
 }
