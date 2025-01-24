@@ -27,7 +27,7 @@ import IBuildBody = COSMOS.IBuildBody;
 export class WorldService {
     
     private _world : World = new World();
-    private _identifier: string | undefined = '';
+    private _identifier: string = '';
     
     private _stepInterval?: NodeJS.Timeout = undefined;
     
@@ -64,7 +64,7 @@ export class WorldService {
     clear(): void {
         this.worldDeltaService.clear();
         this._world = new World();
-        this._identifier = undefined;
+        this._identifier = '';
         
         this.stopStepping();
     }
@@ -168,7 +168,7 @@ export class WorldService {
         if (!this._identifier) return;
         
         this._world.step(deltaTime);
-        
+
         this.worldDeltaService.stepWorld(this._identifier);
     }
     
