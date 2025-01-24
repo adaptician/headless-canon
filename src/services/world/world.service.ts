@@ -27,7 +27,7 @@ import IBuildBody = COSMOS.IBuildBody;
 export class WorldService {
     
     private _world : World = new World();
-    private _identifier: string = '';
+    private _identifier: string | undefined = '';
     
     private _stepInterval?: NodeJS.Timeout = undefined;
     
@@ -37,7 +37,7 @@ export class WorldService {
     }
     
     identify(): string {
-        return this._identifier;
+        return this._identifier ?? 'UNKNOWN';
     }
     
     stage(id: string): void {
@@ -61,6 +61,15 @@ export class WorldService {
         return body.id;
     }
     
+    clear(): void {
+        this.worldDeltaService.clear();
+        this._world = new World();
+        this._identifier = undefined;
+        
+        this.stopStepping();
+    }
+    
+    // KEEP THIS AS IS WHILE LEGACY image is still required for testing.
     stream(): IWorld {
         const bodies = this._world.bodies.map(body => {
             const firstShape = (body.shapes?.length ?? 0) > 0 ? body.shapes[0] : null;
@@ -156,7 +165,11 @@ export class WorldService {
     
     
     private step(deltaTime: number): void {
+        if (!this._identifier) return;
+        
         this._world.step(deltaTime);
+        
+        this.worldDeltaService.stepWorld(this._identifier);
     }
     
     private startStepping(): void {

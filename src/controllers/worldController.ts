@@ -27,7 +27,10 @@ export class WorldController {
 
             this.worldService.stage(dto.id);
 
-            res.json({ message: `A world has been staged with ID: ${this.worldService.identify()}` });
+            const worldId = this.worldService.identify();
+            console.log(`A world has been staged with ID: ${worldId}`);
+            
+            res.json({ data: { worldId: worldId } });
         } catch (error) {
             next(error); // Pass errors to the Express error handler
         }
@@ -49,6 +52,21 @@ export class WorldController {
             const bodyId = this.worldService.addBody(dto);
 
             res.json({ message: `Added body with id ${bodyId}` });
+        } catch (error) {
+            next(error); // Pass errors to the Express error handler
+        }
+    };
+
+    clear: RequestHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            console.log(`Request to CLEAR ...`);
+
+            this.worldService.clear();
+
+            const worldId = this.worldService.identify();
+            console.log(`The world has been cleared - ID: ${worldId}`);
+
+            res.json({ data: { worldId: worldId } });
         } catch (error) {
             next(error); // Pass errors to the Express error handler
         }
