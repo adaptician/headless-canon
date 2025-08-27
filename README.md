@@ -1,4 +1,4 @@
-# Headless Cannon - Proxying Messages to an Interactive Virtual World
+# Headless Cannon - Simulating Physics
 
 This project is part 1/3 of a proof-of-concept system that implements a basic real-time loop using a microservices architecture. A microservices architecture is being explored as a means of making Virtual Reality (VR) applications available for cloud-native infrastructure, with a design that is capable of leveraging elastic scaling.
 
