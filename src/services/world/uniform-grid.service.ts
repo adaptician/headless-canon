@@ -1,9 +1,10 @@
 ﻿import {
-    Body,
+    Body, Box, Material,
     Vec3
 } from 'cannon-es';
 import {getStreamableBody, IContactEvent} from "../cosmos-cannon";
 import {EventBusService} from "../event-bus/event-bus.service";
+import {TrackingBody} from "../../cosmos/tracking-body";
 
 /*
 * Uniform Grid: Divide the world into a fixed grid. 
@@ -35,7 +36,7 @@ export class UniformGridService {
     private readonly _worldSize: number = 50; // Size of the world
     private readonly _cellCount: number = Math.ceil(this._worldSize / this._cellSize);
     
-    private _grid: Map<string, Body[]> = new Map(); // Key: "x,y", Value: Array of objects in the cell
+    private _grid: Map<string, TrackingBody[]> = new Map(); // Key: "x,y", Value: Array of objects in the cell
     
     constructor(private _eventBusService: EventBusService) {
     }
@@ -55,11 +56,10 @@ export class UniformGridService {
         const key = this.getCellKey(body.position);
         
         const existing = this._grid.get(key) ?? [];
-        existing.push(body);
+        
+        existing.push(new TrackingBody(body));
         this._grid.set(key, existing);
         
-        console.log(`Added body ID ${body.id} to grid with KEY ${key}`);
-
         const streamableBody = getStreamableBody(body);
         if (streamableBody) {
             this._eventBusService.publish(
@@ -95,17 +95,17 @@ export class UniformGridService {
             // Remove from old cell
             if (this._grid.has(oldKey)) {
                 const existingBodies = this._grid.get(oldKey) ?? [];
-                this._grid.set(oldKey, existingBodies.filter(o => o !== body));
+                this._grid.set(oldKey, existingBodies.filter(o => o.body !== body));
             }
 
             // Add to new cell
             this.addBodyToGrid(worldId, body);
-            console.log(`Updated body ID ${body.id} from KEY ${oldKey} to new KEY ${newKey}`);
+            // console.log(`Updated body ID ${body.id} from KEY ${oldKey} to new KEY ${newKey}`);
             return;
         }
 
         // Body remains in the same cell - nothing to update in the grid.
-        console.log(`NOTHING updated on body ID ${body.id} with position ${JSON.stringify(body.position)}`);
+        // console.log(`NOTHING updated on body ID ${body.id} with position ${JSON.stringify(body.position)}`);
 
         // Nonetheless, other properties may have been affected; 
         // therefore, in all cases, we notify observers of a collision.
@@ -153,13 +153,18 @@ export class UniformGridService {
     stepGridUpdate(worldId: string): void {
         this._grid.forEach((bodies, key) => {
             bodies.forEach(body => {
-                const streamableBody = getStreamableBody(body);
-                if (streamableBody) {
-                    this._eventBusService.publish(
-                        // TODO:T you need to create a routing key builder for easier re-use
-                        `world.${worldId}.unit.${key}.physics.step`
-                        , JSON.stringify(streamableBody));
+                
+                if (body.hasDelta()) {
+                    
+                    const streamableBody = getStreamableBody(body.body);
+                    if (streamableBody) {
+                        this._eventBusService.publish(
+                            // TODO:T you need to create a routing key builder for easier re-use
+                            `world.${worldId}.unit.${key}.physics.step`
+                            , JSON.stringify(streamableBody));
+                    }
                 }
+                
             });
         });
     }
