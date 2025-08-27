@@ -1,5 +1,5 @@
 ﻿import {
-    Body,
+    Body, Box, Material,
     Vec3
 } from 'cannon-es';
 import {getStreamableBody, IContactEvent} from "../cosmos-cannon";
@@ -60,8 +60,6 @@ export class UniformGridService {
         existing.push(new TrackingBody(body));
         this._grid.set(key, existing);
         
-        // console.log(`Added body ID ${body.id} to grid with KEY ${key}`);
-
         const streamableBody = getStreamableBody(body);
         if (streamableBody) {
             this._eventBusService.publish(
