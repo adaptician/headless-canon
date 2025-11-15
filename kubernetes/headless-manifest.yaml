@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: headless-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: headless-api
+      network: panorama
+  template:
+    metadata:
+      labels:
+        app: headless-api
+        network: panorama
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: headless-api
+          image: headless.api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000 # pod port  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: panorama-api
+spec:
+  selector:
+    app: panorama-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000 # exposed service port
+      targetPort: 3000 # pod port
+  type: ClusterIP
